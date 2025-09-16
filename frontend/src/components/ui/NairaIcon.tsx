@@ -1,5 +1,5 @@
 import { TbCurrencyNaira } from "react-icons/tb";
-const NairaIcon = ({classes}:{classes:string}) => {
+const NairaIcon = ({classes}:{classes?:string}) => {
   return  <TbCurrencyNaira className={`${classes}`} />
 }
 
