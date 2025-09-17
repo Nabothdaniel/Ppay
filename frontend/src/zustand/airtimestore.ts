@@ -12,18 +12,35 @@ interface AirtimeStoreState {
 
   hasPin: boolean;
   setHasPin: (value: boolean) => void;
+
+  pendingPayment: null | {
+    txId: string;
+    amount: string;
+    price: string;
+    cashback: string;
+    network: string;
+  };
+  setPendingPayment: (payment: AirtimeStoreState["pendingPayment"]) => void;
+  clearPendingPayment: () => void;
 }
 
 export const useAirtimeStore = create<AirtimeStoreState>((set) => ({
   phone: "",
-  setPhone: (phone) => set({ phone }),
+  setPhone: (phone: string) => set({ phone }),
 
   activeTab: "Hot",
-  setActiveTab: (tab) => set({ activeTab: tab }),
+  setActiveTab: (tab: "Hot" | "Daily" | "Weekly" | "Monthly" | "XtraValue") =>
+    set({ activeTab: tab }),
 
   selectedNetwork: "MTN",
-  setSelectedNetwork: (network) => set({ selectedNetwork: network }),
+  setSelectedNetwork: (network: "MTN" | "Glo" | "Airtel") =>
+    set({ selectedNetwork: network }),
 
-  hasPin: false, // default (user has not set PIN)
-  setHasPin: (value) => set({ hasPin: value }),
+  hasPin: false,
+  setHasPin: (value: boolean) => set({ hasPin: value }),
+
+  pendingPayment: null,
+  setPendingPayment: (payment: AirtimeStoreState["pendingPayment"]) =>
+    set({ pendingPayment: payment }),
+  clearPendingPayment: () => set({ pendingPayment: null }),
 }));

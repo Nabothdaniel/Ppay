@@ -8,10 +8,13 @@ import "aos/dist/aos.css";
 import Dashboard from './pages/Dashboard';
 import DataPlans from './pages/DataPlans';
 import Payment from './pages/Payment';
+import ConfirmPayment from './components/payment/ConfirmPayment'
+import SetupPin from './pages/SetupPin'
+
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
-import Success from './components/payment/Success'
-import ErrorPage from './components/payment/Error'
+import Success from './components/payment/Success';
+import ErrorPage from './components/payment/Error';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +29,14 @@ const router = createBrowserRouter([
   {
     path: '/payment',
     element: <Payment />,
+  },
+  {
+    path:'/confirm-payment',
+    element:<ConfirmPayment/>
+  },
+  {
+    path:'/setup-pin',
+    element:<SetupPin/>
   },
   {
     path: '/settings',

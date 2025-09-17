@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { FaCreditCard, FaWallet, FaCheckCircle } from "react-icons/fa";
 import { RiPhoneFill } from "react-icons/ri";
-import { useSearchParams, useNavigate } from "react-router-dom";
 import { telcoLogos } from "../constants/telecos";
 import { formatCurrency } from "../utils/helperFns";
 import backgroundBanner from "../assets/img/background.jpg";
@@ -11,13 +10,7 @@ const Payment = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // zustand state (synced with PhoneNumber input)
   const { phone, hasPin } = useAirtimeStore();
-
-  // modal states
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showPin, setShowPin] = useState(false);
-  const [pin, setPin] = useState("");
 
   const txId = searchParams.get("txId") || "N/A";
   const amount = searchParams.get("amount") || "N/A";
@@ -29,23 +22,6 @@ const Payment = () => {
     MTN: telcoLogos.MTN,
     Glo: telcoLogos.Glo,
     Airtel: telcoLogos.Airtel,
-  };
-
-  // Handle final confirm (after PIN)
-  const handleConfirm = () => {
-    setShowPin(false);
-    setPin("");
-
-    const success = Math.random() > 0.3;
-    if (success) {
-      navigate("/success", {
-        state: { txId, amount, price, cashback, network, phone },
-      });
-    } else {
-      navigate("/error", {
-        state: { txId, amount, price, cashback, network, phone },
-      });
-    }
   };
 
   return (
@@ -161,9 +137,11 @@ const Payment = () => {
                 return;
               }
               if (!hasPin) {
-                navigate("/setup-pin"); // 🔹 redirect if no PIN
+                navigate("/setup-pin");
               } else {
-                setShowConfirm(true);
+                navigate("/confirm-payment", {
+                  state: { txId, amount, price, cashback, network, phone },
+                });
               }
             }}
             className="w-full bg-emerald-500 text-white py-3 rounded-xl font-medium text-lg hover:bg-emerald-600 transition"
@@ -172,99 +150,6 @@ const Payment = () => {
           </button>
         </div>
       </div>
-
-      {/* Confirmation Modal */}
-      {showConfirm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 relative mx-4">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900">
-              Confirm Purchase
-            </h2>
-            <p className="text-sm text-gray-600 mb-3">
-              Please review your purchase details:
-            </p>
-
-            <ul className="space-y-2 text-sm">
-              <li>
-                <span className="font-medium text-gray-600">Plan:</span> {amount}
-              </li>
-              <li>
-                <span className="font-medium text-gray-600">Price:</span>{" "}
-                {formatCurrency(price)}
-              </li>
-              <li>
-                <span className="font-medium text-gray-600">Phone:</span>{" "}
-                {phone || "Not provided"}
-              </li>
-              <li>
-                <span className="font-medium text-gray-600">Network:</span>{" "}
-                {network}
-              </li>
-            </ul>
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="flex-1 border border-gray-300 rounded-lg py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setShowConfirm(false);
-                  setShowPin(true);
-                }}
-                className="flex-1 bg-emerald-500 text-white rounded-lg py-2 hover:bg-emerald-600"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Payment PIN Modal */}
-      {showPin && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 relative">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900">
-              Enter Payment PIN
-            </h2>
-            <p className="text-sm text-gray-600 mb-3">
-              For security, enter your 4-digit PIN to proceed.
-            </p>
-
-            <input
-              type="password"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              maxLength={4}
-              className="w-full border border-gray-300 rounded-lg p-3 text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              placeholder="••••"
-            />
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowPin(false)}
-                className="flex-1 border border-gray-300 rounded-lg py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={pin.length < 4}
-                onClick={handleConfirm}
-                className={`flex-1 rounded-lg py-2 text-white ${
-                  pin.length < 4
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-emerald-500 hover:bg-emerald-600"
-                }`}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
