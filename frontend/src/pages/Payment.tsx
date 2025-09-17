@@ -11,9 +11,8 @@ const Payment = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // zustand state
- const { phone, setPhone } = useAirtimeStore();
-
+  // zustand state (synced with PhoneNumber input)
+  const { phone, hasPin } = useAirtimeStore();
 
   // modal states
   const [showConfirm, setShowConfirm] = useState(false);
@@ -37,15 +36,14 @@ const Payment = () => {
     setShowPin(false);
     setPin("");
 
-    // Simulate API response (success vs error)
     const success = Math.random() > 0.3;
     if (success) {
       navigate("/success", {
-        state: { txId, amount, price, cashback, network, phone: phone },
+        state: { txId, amount, price, cashback, network, phone },
       });
     } else {
       navigate("/error", {
-        state: { txId, amount, price, cashback, network, phone: phone },
+        state: { txId, amount, price, cashback, network, phone },
       });
     }
   };
@@ -147,14 +145,9 @@ const Payment = () => {
               <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
                 <RiPhoneFill className="text-emerald-600 w-5 h-5" />
               </div>
-
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Enter phone number"
-                className="flex-1 border-none outline-none text-gray-900 font-medium placeholder-gray-400 bg-transparent"
-              />
+              <span className="text-gray-900 font-medium">
+                {phone || "Not provided"}
+              </span>
             </div>
           </div>
         </div>
@@ -162,9 +155,18 @@ const Payment = () => {
         {/* Bottom Action */}
         <div className="p-6 border-t border-gray-200">
           <button
-            onClick={() => setShowConfirm(true)}
+            onClick={() => {
+              if (!phone) {
+                alert("Please provide a phone number before proceeding.");
+                return;
+              }
+              if (!hasPin) {
+                navigate("/setup-pin"); // 🔹 redirect if no PIN
+              } else {
+                setShowConfirm(true);
+              }
+            }}
             className="w-full bg-emerald-500 text-white py-3 rounded-xl font-medium text-lg hover:bg-emerald-600 transition"
-            disabled={!phone} // prevent continue if phone is empty
           >
             Continue Payment
           </button>

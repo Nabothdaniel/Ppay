@@ -9,15 +9,21 @@ interface AirtimeStoreState {
 
   selectedNetwork: "MTN" | "Glo" | "Airtel";
   setSelectedNetwork: (network: "MTN" | "Glo" | "Airtel") => void;
+
+  hasPin: boolean;
+  setHasPin: (value: boolean) => void;
 }
 
-export const useAirtimeStore = create<AirtimeStoreState>((set:any) => ({
+export const useAirtimeStore = create<AirtimeStoreState>((set) => ({
   phone: "",
-  setPhone: (phone:string) => set({ phone }),
+  setPhone: (phone) => set({ phone }),
 
   activeTab: "Hot",
-  setActiveTab: (tab:string) => set({ activeTab: tab }),
+  setActiveTab: (tab) => set({ activeTab: tab }),
 
   selectedNetwork: "MTN",
-  setSelectedNetwork: (network:string) => set({ selectedNetwork: network }),
+  setSelectedNetwork: (network) => set({ selectedNetwork: network }),
+
+  hasPin: false, // default (user has not set PIN)
+  setHasPin: (value) => set({ hasPin: value }),
 }));

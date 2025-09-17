@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaXmark } from "react-icons/fa6";
 import mtnLogo from "../../assets/img/mtn-logo.jpeg";
 import gloLogo from "../../assets/img/glo-logo.png";
 import airtelLogo from "../../assets/img/airtel-logo.png";
+import { useAirtimeStore } from "../../zustand/airtimestore";
 
 function getTelcoLogo(phone: string) {
   const cleaned = phone.replace(/\s+/g, "");
@@ -29,7 +30,9 @@ interface PhoneNumberProps {
 }
 
 const PhoneNumber = ({ defaultNumber = "09137169644" }: PhoneNumberProps) => {
-  const [phone, setPhone] = useState(defaultNumber);
+  const { phone, setPhone } = useAirtimeStore(); 
+  const [localPhone, setLocalPhone] = useState(phone || defaultNumber);
+
   const [recentNumbers, setRecentNumbers] = useState<string[]>([
     defaultNumber,
     "08051234567",
@@ -38,26 +41,31 @@ const PhoneNumber = ({ defaultNumber = "09137169644" }: PhoneNumberProps) => {
   ]);
   const [isFocused, setIsFocused] = useState(false);
 
-  const telcoLogo = getTelcoLogo(phone);
+  const telcoLogo = getTelcoLogo(localPhone);
+
+  // keep zustand in sync with local input
+  useEffect(() => {
+    setPhone(localPhone);
+  }, [localPhone, setPhone]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
+    setLocalPhone(e.target.value);
   };
 
   const handleSelectNumber = (num: string) => {
-    setPhone(num);
+    setLocalPhone(num);
     setIsFocused(false);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    if (phone && !recentNumbers.includes(phone)) {
-      setRecentNumbers((prev) => [phone, ...prev].slice(0, 4));
+    if (localPhone && !recentNumbers.includes(localPhone)) {
+      setRecentNumbers((prev) => [localPhone, ...prev].slice(0, 4));
     }
   };
 
   const clearPhone = () => {
-    setPhone("");
+    setLocalPhone("");
   };
 
   const removeRecent = (num: string) => {
@@ -66,7 +74,7 @@ const PhoneNumber = ({ defaultNumber = "09137169644" }: PhoneNumberProps) => {
 
   // filter recents
   const filteredRecents = recentNumbers.filter((num) =>
-    phone ? num.startsWith(phone) : true
+    localPhone ? num.startsWith(localPhone) : true
   );
 
   return (
@@ -82,7 +90,7 @@ const PhoneNumber = ({ defaultNumber = "09137169644" }: PhoneNumberProps) => {
         {/* Phone input */}
         <input
           type="tel"
-          value={phone}
+          value={localPhone}
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={handleBlur}
@@ -91,7 +99,7 @@ const PhoneNumber = ({ defaultNumber = "09137169644" }: PhoneNumberProps) => {
         />
 
         {/* Clear input */}
-        {phone && (
+        {localPhone && (
           <FaXmark
             className="text-gray-400 cursor-pointer hover:text-red-500 ml-2 mr-1"
             onClick={clearPhone}

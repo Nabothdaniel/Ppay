@@ -29,10 +29,11 @@ const DataPlansSection = ({ phoneNumber }: { phoneNumber?: string }) => {
   const autoNetwork = useMemo(() => detectNetwork(phoneNumber || ""), [phoneNumber]);
 
   // zustand state
-  const { activeTab, selectedNetwork, setActiveTab, setSelectedNetwork } = useAirtimeStore();
+  const { activeTab, selectedNetwork, setActiveTab, setSelectedNetwork, } = useAirtimeStore();
 
   // local state for dropdown
   const [open, setOpen] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -83,11 +84,11 @@ const DataPlansSection = ({ phoneNumber }: { phoneNumber?: string }) => {
 
   const handleBuy = (plan: Plan) => {
     const txId = uuidv4();
-    navigate(
-      `/payment?txId=${txId}&amount=${encodeURIComponent(plan.size)}&price=${encodeURIComponent(
-        plan.price
-      )}&cashback=${plan.cashback}&network=${plan.network}&phone=${phoneNumber || ""}`
-    );
+   navigate(
+    `/payment?txId=${txId}&amount=${encodeURIComponent(plan.size)}&price=${encodeURIComponent(
+      plan.price
+    )}&cashback=${plan.cashback}&network=${plan.network}`
+  );
   };
 
   return (
