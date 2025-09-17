@@ -1,10 +1,12 @@
 import { telcoLogos } from "../../constants/telecos";
 
+type Network = "MTN" | "Glo" | "Airtel";
+
 interface ConfirmPaymentModalProps {
   amount: string;
   price: string;
   phone: string;
-  network: string;
+  network: Network;
   onCancel: () => void;
   onConfirm: () => void;
 }
@@ -24,12 +26,12 @@ const ConfirmPaymentModal = ({
         <div className="bg-emerald-500 px-6 py-4 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-white">Confirm Purchase</h2>
           {telcoLogos[network] && (
-            <img
-              src={telcoLogos[network]}
-              alt={network}
-              className="w-10 h-10 rounded-full bg-white shadow-sm"
-            />
-          )}
+          <img
+            src={telcoLogos[network]}
+            alt={network}
+            className="w-10 h-10 rounded-full bg-white shadow-sm"
+          />
+)}
         </div>
 
         {/* Content */}
