@@ -109,11 +109,11 @@ const DataPlansSection = ({ phoneNumber }: { phoneNumber?: string }) => {
           onClick={() => setOpen(!open)}
         >
           <div className="flex items-center gap-2">
-            <img
-              src={networkLogos[selectedNetwork]}
-              alt={selectedNetwork}
-              className="w-6 h-6 rounded-full"
-            />
+           <img
+         src={networkLogos[selectedNetwork as "MTN" | "Glo" | "Airtel"]}
+        alt={selectedNetwork}
+        />
+
             <span className="text-sm font-medium text-gray-700">{selectedNetwork}</span>
           </div>
           {open ? (

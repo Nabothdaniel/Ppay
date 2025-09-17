@@ -48,7 +48,10 @@ const PaymentPinModal = ({ onCancel, onSubmit }: PaymentPinModalProps) => {
           {pin.map((digit, index) => (
             <input
               key={index}
-              ref={(el) => (inputs.current[index] = el)}
+             ref={(el: HTMLInputElement | null): void => {
+             inputs.current[index] = el;
+              }}
+
               type="password"
               inputMode="numeric"
               maxLength={1}
